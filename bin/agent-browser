@@ -2,6 +2,19 @@
 # agent-browser CLI wrapper
 # Tries native binary first, falls back to Node.js
 
+# Resolve symlinks to find real script location
+SCRIPT="$0"
+while [ -L "$SCRIPT" ]; do
+  SCRIPT_DIR="$(cd "$(dirname "$SCRIPT")" && pwd)"
+  SCRIPT="$(readlink "$SCRIPT")"
+  # Handle relative symlinks
+  case "$SCRIPT" in
+    /*) ;;
+    *) SCRIPT="$SCRIPT_DIR/$SCRIPT" ;;
+  esac
+done
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT")" && pwd)"
+
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
 
@@ -16,7 +29,6 @@ case "$ARCH" in
   aarch64|arm64) ARCH="arm64" ;;
 esac
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 BINARY="$SCRIPT_DIR/agent-browser-${OS}-${ARCH}"
 
 # Try native binary if it exists
