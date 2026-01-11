@@ -428,11 +428,12 @@ export class BrowserManager {
 
   /**
    * Launch the browser with the specified options
+   * If already launched, this is a no-op (browser stays open)
    */
   async launch(options: LaunchCommand): Promise<void> {
-    // Close existing browser if any
+    // If already launched, don't relaunch
     if (this.browser) {
-      await this.close();
+      return;
     }
 
     // Select browser type
