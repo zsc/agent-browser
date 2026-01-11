@@ -459,6 +459,29 @@ export class BrowserManager {
     const page = await context.newPage();
     this.pages.push(page);
     this.activePageIndex = 0;
+
+    // Automatically start console and error tracking
+    this.setupPageTracking(page);
+  }
+
+  /**
+   * Set up console and error tracking for a page
+   */
+  private setupPageTracking(page: Page): void {
+    page.on('console', (msg) => {
+      this.consoleMessages.push({
+        type: msg.type(),
+        text: msg.text(),
+        timestamp: Date.now(),
+      });
+    });
+
+    page.on('pageerror', (error) => {
+      this.pageErrors.push({
+        message: error.message,
+        timestamp: Date.now(),
+      });
+    });
   }
 
   /**
@@ -473,6 +496,9 @@ export class BrowserManager {
     const page = await context.newPage();
     this.pages.push(page);
     this.activePageIndex = this.pages.length - 1;
+
+    // Set up tracking for the new page
+    this.setupPageTracking(page);
 
     return { index: this.activePageIndex, total: this.pages.length };
   }
@@ -497,6 +523,9 @@ export class BrowserManager {
     const page = await context.newPage();
     this.pages.push(page);
     this.activePageIndex = this.pages.length - 1;
+
+    // Set up tracking for the new page
+    this.setupPageTracking(page);
 
     return { index: this.activePageIndex, total: this.pages.length };
   }

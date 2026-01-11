@@ -1160,7 +1160,6 @@ async function handleConsole(command: ConsoleCommand, browser: BrowserManager): 
     return successResponse(command.id, { cleared: true });
   }
 
-  browser.startConsoleTracking();
   const messages = browser.getConsoleMessages();
   return successResponse(command.id, { messages });
 }
@@ -1171,7 +1170,6 @@ async function handleErrors(command: ErrorsCommand, browser: BrowserManager): Pr
     return successResponse(command.id, { cleared: true });
   }
 
-  browser.startErrorTracking();
   const errors = browser.getPageErrors();
   return successResponse(command.id, { errors });
 }
